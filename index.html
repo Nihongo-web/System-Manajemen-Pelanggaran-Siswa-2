@@ -100,6 +100,28 @@
             background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
         }
 
+        /* PERFORMANCE OPTIMIZATIONS */
+        .btn-press,
+        button,
+        select,
+        input,
+        .custom-select-trigger {
+            touch-action: manipulation;
+            /* Removes 300ms delay on mobile */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .transform-gpu {
+            transform: translateZ(0);
+            /* Force GPU acceleration */
+            will-change: transform;
+        }
+
+        .modal-content,
+        .notification-panel {
+            will-change: transform, opacity;
+        }
+
         @keyframes shimmer {
             0% {
                 background-position: 200% 0;
@@ -923,7 +945,9 @@
             },
 
             get JURUSAN_OPTIONS() {
-                return ConfigManager.loadConfig().JURUSAN_OPTIONS;
+                const options = ConfigManager.loadConfig().JURUSAN_OPTIONS;
+                // ALPHABETICAL SORTING (A-Z)
+                return options.sort((a, b) => a.label.localeCompare(b.label));
             },
 
             // Validation Rules
@@ -938,9 +962,9 @@
             // UI Configuration
             UI: Object.freeze({
                 CHUNK_SIZE: 10,
-                DEBOUNCE_DELAY: 300,
+                DEBOUNCE_DELAY: 150, // Reduced for snappier mobile feel
                 TOAST_DURATION: 3000,
-                ANIMATION_DELAY: 300
+                ANIMATION_DELAY: 200 // Faster animations
             })
         });
 
