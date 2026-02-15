@@ -1,0 +1,2416 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Razia HP SMKN 1 Malteng - Enterprise Edition</title>
+    <script src="tailwindcss.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Roboto', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+                        dark: { bg: '#020617', card: '#0f172a', border: '#1e293b' }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'bounce-short': 'bounceShort 0.3s ease-in-out'
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        bounceShort: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-5px)' } }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .dark body {
+            background-color: #020617;
+            color: #f8fafc;
+        }
+
+        .light body {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        .modal-backdrop {
+            backdrop-filter: blur(8px);
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .modal-active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-active .modal-content {
+            transform: scale(1);
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+
+        .btn-press:active {
+            transform: scale(0.97);
+        }
+
+        .wa-disabled {
+            filter: grayscale(1);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        .dark .shimmer {
+            background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Custom Select Styles */
+        .custom-select-wrapper {
+            position: relative;
+            user-select: none;
+        }
+
+        .custom-select-trigger {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .custom-select-options {
+            position: absolute;
+            top: 110%;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+            max-height: 300px;
+            overflow-y: auto;
+            backdrop-filter: blur(20px) saturate(180%);
+            padding: 0.5rem;
+        }
+
+        .dark .custom-select-options {
+            background: rgba(15, 23, 42, 0.85);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-select-wrapper.open .custom-select-options {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .custom-option {
+            padding: 0.75rem 1.25rem;
+            margin: 0.25rem 0;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.9rem;
+            font-weight: 700;
+            border-radius: 1rem;
+            color: #475569;
+        }
+
+        .dark .custom-option {
+            color: #94a3b8;
+        }
+
+        .custom-option:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #2563eb;
+            transform: translateX(5px);
+        }
+
+        .dark .custom-option:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #60a5fa;
+        }
+
+        .custom-option.selected {
+            background: #2563eb;
+            color: white !important;
+        }
+
+        .dark .custom-option.selected {
+            background: #3b82f6;
+            color: white !important;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Notification Panel - Adaptive Positioning */
+        .notification-panel {
+            position: fixed;
+            top: 4.5rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            width: 350px;
+            max-width: calc(100vw - 2rem);
+            max-height: 450px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Mobile active state */
+        .notification-panel.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Desktop: Normal positioning (right-aligned from button) */
+        @media (min-width: 768px) {
+            .notification-panel {
+                position: absolute;
+                top: calc(100% + 0.75rem);
+                left: auto;
+                right: 0;
+                transform: translateY(-10px);
+            }
+
+            .notification-panel.active {
+                transform: translateY(0);
+            }
+        }
+
+        .dark .notification-panel {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .dark .notification-item {
+            border-bottom-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .notification-item:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .badge-pulse {
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen pb-24 selection:bg-brand-500/30 font-sans antialiased">
+
+    <!-- Error Boundary UI -->
+    <div id="global-error"
+        class="fixed inset-0 z-[999] bg-red-50 dark:bg-red-950 hidden items-center justify-center p-8 text-center">
+        <div class="max-w-md">
+            <h1 class="text-4xl mb-4">😵</h1>
+            <h2 class="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">Terjadi Kesalahan Kritis</h2>
+            <p class="text-slate-600 dark:text-slate-300 mb-6" id="error-message">Aplikasi mengalami masalah tak
+                terduga.</p>
+            <button onclick="window.location.reload()"
+                class="px-6 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition">Muat Ulang
+                Halaman</button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header
+        class="relative z-[60] bg-white dark:bg-dark-bg border-b border-slate-200 dark:border-dark-border p-4 transition-colors">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3 group cursor-pointer" id="brand-logo">
+                <div
+                    class="w-10 h-10 bg-gradient-to-tr from-brand-600 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform duration-300">
+                    <span class="text-white font-bold text-xs">SMK</span>
+                </div>
+                <div>
+                    <h1
+                        class="font-extrabold text-lg md:text-xl tracking-tight leading-tight group-hover:text-brand-500 transition-colors">
+                        SMKN 1 MALTENG</h1>
+                    <div class="flex items-center gap-2">
+                        <span class="inline-block w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                        <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold tracking-widest uppercase">
+                            ENTERPRISE SYSTEM V6.0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <!-- Admin Mode Button - Desktop: Center position, Mobile: Same as before -->
+                <button data-action="toggle-admin"
+                    class="p-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:ring-2 ring-purple-500/50 transition-all active:scale-95 flex items-center gap-2 shadow-lg shadow-purple-500/20">
+                    <span class="text-lg">⚙️</span>
+                    <span class="hidden md:inline text-[10px] font-bold uppercase tracking-wider">Admin Mode</span>
+                </button>
+
+                <!-- Notification Bell - Desktop: After Admin Mode, Mobile: Same as before -->
+                <div class="relative">
+                    <button data-action="toggle-notifications" id="notif-btn"
+                        class="p-2.5 bg-slate-100 dark:bg-dark-card rounded-xl hover:ring-2 ring-brand-500/50 transition-all active:scale-95 flex items-center justify-center">
+                        <span class="text-lg">🔔</span>
+                        <span id="notif-badge"
+                            class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white dark:border-dark-bg hidden badge-pulse">0</span>
+                    </button>
+
+                    <!-- Notification Panel -->
+                    <div id="notif-panel" class="notification-panel">
+                        <div
+                            class="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-white/5">
+                            <h3 class="text-xs font-black uppercase tracking-widest text-slate-500">Peringatan (3x+)
+                            </h3>
+                            <span id="notif-count-text"
+                                class="text-[10px] font-bold text-red-500 py-0.5 px-2 bg-red-500/10 rounded-full">0
+                                Siswa</span>
+                        </div>
+                        <div id="notif-list" class="flex-1 overflow-y-auto custom-scroll max-h-[350px]">
+                            <!-- Notifications injected here -->
+                            <div class="p-8 text-center opacity-40">
+                                <span class="text-3xl block mb-2">🎈</span>
+                                <p class="text-[10px] font-bold uppercase tracking-widest">Semua Aman</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button data-action="toggle-theme"
+                    class="hidden md:block p-2.5 bg-slate-100 dark:bg-dark-card rounded-xl hover:ring-2 ring-brand-500/50 transition-all active:scale-95"
+                    aria-label="Toggle Theme">
+                    <span class="dark:hidden text-lg">🌙</span><span class="hidden dark:inline text-lg">☀️</span>
+                </button>
+                <div class="hidden md:flex items-center gap-2 ml-2">
+                    <button data-action="open-reset"
+                        class="px-4 py-2 bg-red-600 text-white text-[11px] font-bold rounded-xl shadow-md shadow-red-600/20 hover:bg-red-700 transition-all uppercase btn-press flex items-center gap-2">
+                        <span>⚠️</span> Reset System
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 space-y-8 mt-4 animate-fade-in">
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-3 gap-3" id="stats-container">
+            <!-- Populated by JS -->
+            <div class="shimmer h-24 rounded-3xl"></div>
+            <div class="shimmer h-24 rounded-3xl"></div>
+            <div class="shimmer h-24 rounded-3xl"></div>
+        </div>
+
+        <!-- Registration Form -->
+        <section
+            class="glass-card p-6 md:p-8 rounded-[2.5rem] shadow-xl hover:shadow-2xl transition-shadow duration-300">
+            <h2 class="text-lg font-black mb-8 flex items-center gap-3 italic tracking-tight">
+                <span
+                    class="w-10 h-10 flex items-center justify-center bg-brand-500/10 text-brand-500 rounded-2xl text-lg shadow-inner">✚</span>
+                REGISTRASI PELANGGARAN
+            </h2>
+            <form id="mainForm" class="grid grid-cols-1 md:grid-cols-2 gap-6" novalidate>
+                <div class="space-y-4">
+                    <div class="group">
+                        <label
+                            class="block text-[10px] font-bold text-slate-400 mb-2 ml-1 uppercase group-focus-within:text-brand-500 transition-colors">Nama
+                            Lengkap Siswa <span class="text-red-500">*</span></label>
+                        <input type="text" name="nama" required
+                            class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border p-4 rounded-2xl outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-700"
+                            placeholder="Input Nama...">
+                        <p class="text-[10px] text-red-500 mt-1 hidden" data-error="nama"></p>
+                    </div>
+                    <div class="group">
+                        <label
+                            class="block text-[10px] font-bold text-slate-400 mb-2 ml-1 uppercase group-focus-within:text-brand-500 transition-colors">Kelas
+                            <span class="text-red-500">*</span></label>
+                        <select name="kelas" required
+                            class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border p-4 rounded-2xl outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all text-slate-600 dark:text-slate-300 appearance-none cursor-pointer">
+                            <option value="" disabled selected>Pilih Kelas...</option>
+                        </select>
+                        <p class="text-[10px] text-red-500 mt-1 hidden" data-error="kelas"></p>
+                    </div>
+                    <div class="group">
+                        <label
+                            class="block text-[10px] font-bold text-slate-400 mb-2 ml-1 uppercase group-focus-within:text-brand-500 transition-colors">Jurusan
+                            <span class="text-red-500">*</span></label>
+                        <select name="jurusan" required
+                            class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border p-4 rounded-2xl outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all text-slate-600 dark:text-slate-300 appearance-none cursor-pointer">
+                            <option value="" disabled selected>Pilih Jurusan...</option>
+                        </select>
+                        <p class="text-[10px] text-red-500 mt-1 hidden" data-error="jurusan"></p>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="group">
+                        <label
+                            class="block text-[10px] font-bold text-slate-400 mb-2 ml-1 uppercase group-focus-within:text-brand-500 transition-colors">Nomor
+                            HP Siswa</label>
+                        <input type="tel" name="telpSiswa"
+                            class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border p-4 rounded-2xl outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-700"
+                            placeholder="08...">
+                        <p class="text-[10px] text-red-500 mt-1 hidden" data-error="telpSiswa"></p>
+                    </div>
+                    <div class="group">
+                        <label
+                            class="block text-[10px] font-bold text-slate-400 mb-2 ml-1 uppercase group-focus-within:text-brand-500 transition-colors">Nomor
+                            HP Ortu (WA)</label>
+                        <input type="tel" name="telpOrtu"
+                            class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border p-4 rounded-2xl outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-700"
+                            placeholder="Wajib untuk fitur WA">
+                        <p class="text-[10px] text-red-500 mt-1 hidden" data-error="telpOrtu"></p>
+                    </div>
+                </div>
+                <div class="md:col-span-2 group">
+                    <label
+                        class="block text-[10px] font-bold text-slate-400 mb-2 ml-1 uppercase group-focus-within:text-brand-500 transition-colors">Kronologi
+                        Pelanggaran <span class="text-red-500">*</span></label>
+                    <textarea name="alasan" required
+                        class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border p-4 rounded-2xl outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all min-h-[80px] placeholder:text-slate-300 dark:placeholder:text-slate-700"
+                        placeholder="Berikan detail kejadian..."></textarea>
+                    <p class="text-[10px] text-red-500 mt-1 hidden" data-error="alasan"></p>
+                </div>
+                <div class="md:col-span-2 pt-2">
+                    <button type="submit"
+                        class="w-full bg-brand-600 hover:bg-brand-700 text-white font-extrabold py-4 rounded-2xl transition-all shadow-lg shadow-brand-500/30 btn-press uppercase tracking-wider flex justify-center items-center gap-2">
+                        <span>💾</span> Simpan Data
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Filter and Search Section -->
+        <div class="relative z-40 py-4 transition-colors space-y-4">
+
+            <!-- Mobile: Dual Select Dropdowns -->
+            <div class="md:hidden space-y-2">
+                <!-- Filter Kelas Mobile -->
+                <div class="relative">
+                    <select id="mobile-filter-kelas"
+                        class="w-full bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border p-3 rounded-2xl outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 text-slate-600 dark:text-slate-300 appearance-none font-bold uppercase text-xs cursor-pointer transition-all shadow-sm hover:shadow-md">
+                        <option value="all">📚 Semua Kelas</option>
+                    </select>
+                    <div
+                        class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 transition-transform">
+                        ▼</div>
+                </div>
+
+                <!-- Filter Jurusan Mobile -->
+                <div class="relative">
+                    <select id="mobile-filter-jurusan"
+                        class="w-full bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border p-3 rounded-2xl outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 text-slate-600 dark:text-slate-300 appearance-none font-bold uppercase text-xs cursor-pointer transition-all shadow-sm hover:shadow-md">
+                        <option value="all">🎓 Semua Jurusan</option>
+                    </select>
+                    <div
+                        class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 transition-transform">
+                        ▼</div>
+                </div>
+            </div>
+
+            <!-- Desktop: Dual Horizontal Chips -->
+            <div class="hidden md:block space-y-2">
+                <!-- Filter Kelas Desktop -->
+                <div class="flex items-center gap-2">
+                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest w-16">Kelas:</span>
+                    <div class="flex gap-2 overflow-x-auto custom-scroll pb-1" id="desktop-filter-kelas">
+                        <!-- Populated dynamically from APP_CONFIG -->
+                    </div>
+                </div>
+
+                <!-- Filter Jurusan Desktop -->
+                <div class="flex items-center gap-2">
+                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest w-16">Jurusan:</span>
+                    <div class="flex gap-2 overflow-x-auto custom-scroll pb-1" id="desktop-filter-jurusan">
+                        <!-- Populated dynamically from APP_CONFIG -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative group">
+                <input type="text" id="searchBar"
+                    class="w-full bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border pl-12 pr-12 py-4 rounded-2xl shadow-sm outline-none focus:ring-4 ring-brand-500/20 transition-all placeholder:text-slate-400"
+                    placeholder="Cari Nama / Kelas / Jurusan...">
+                <span
+                    class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-500 transition-colors text-xl">🔍</span>
+
+                <!-- Clear Search Button -->
+                <button id="clearSearch"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center opacity-0 pointer-events-none">
+                    <span class="text-lg">✕</span>
+                </button>
+
+                <div id="loading-indicator" class="absolute right-14 top-1/2 -translate-y-1/2 hidden">
+                    <div class="w-4 h-4 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards Container -->
+        <div id="studentContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-12 min-h-[200px]">
+            <!-- Content Injected by JS -->
+        </div>
+
+        <!-- Infinite Scroll Sentinel -->
+        <div id="sentinel"
+            class="h-10 w-full flex justify-center items-center opacity-0 transition-opacity duration-300">
+            <span class="text-slate-400 text-xs animate-pulse">Memuat lebih banyak...</span>
+        </div>
+    </main>
+
+    <!-- Modal Template (Reusable) -->
+    <template id="modal-template">
+        <div class="fixed inset-0 bg-slate-950/80 z-[100] grid place-items-center p-4 modal-backdrop"
+            aria-hidden="true">
+            <div class="bg-white dark:bg-dark-card w-full rounded-[2.5rem] p-8 border border-slate-200 dark:border-dark-border shadow-2xl modal-content"
+                role="dialog" aria-modal="true">
+                <!-- Content goes here -->
+            </div>
+        </div>
+    </template>
+
+    <!-- Specific Modals -->
+    <!-- Action Modal -->
+    <div id="actionModal"
+        class="fixed inset-0 bg-slate-950/80 z-[100] hidden flex items-center justify-center p-4 modal-backdrop"
+        aria-hidden="true">
+        <div
+            class="bg-white dark:bg-dark-card w-full max-w-sm rounded-[2.5rem] p-8 border border-slate-200 dark:border-dark-border shadow-2xl modal-content">
+            <div class="w-20 h-20 bg-brand-500/10 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <span class="text-4xl italic">⚖️</span>
+            </div>
+            <h2 class="text-xl font-black text-center mb-6">PILIH TINDAKAN</h2>
+            <div class="grid gap-3">
+                <button data-action="confirm-sita"
+                    class="w-full py-4 bg-red-600 text-white font-bold rounded-2xl hover:bg-red-700 transition-all btn-press shadow-lg shadow-red-600/20 flex flex-col items-center">
+                    <span>SITA HP</span>
+                    <span class="text-[8px] opacity-70 font-normal">BARANG BUKTI DITAHAN</span>
+                </button>
+                <button data-action="confirm-catat"
+                    class="w-full py-4 bg-slate-600 text-white font-bold rounded-2xl hover:bg-slate-700 transition-all btn-press flex flex-col items-center">
+                    <span>CATAT SAJA</span>
+                    <span class="text-[8px] opacity-70 font-normal">TIDAK ADA PENYITAAN</span>
+                </button>
+                <button data-action="close-modal"
+                    class="mt-4 py-2 text-slate-400 hover:text-slate-600 text-xs font-bold uppercase text-center">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal"
+        class="fixed inset-0 bg-slate-950/80 z-[110] hidden flex items-center justify-center p-4 modal-backdrop">
+        <div
+            class="bg-white dark:bg-dark-card w-full max-w-lg rounded-[2.5rem] p-8 border border-slate-200 dark:border-dark-border shadow-2xl modal-content">
+            <h2 class="text-xl font-black mb-6 italic">✏️ UPDATE DATA SISWA</h2>
+            <form id="editForm" class="space-y-5">
+                <input type="hidden" name="id">
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 ml-1 block">Nama
+                            Lengkap</label>
+                        <input type="text" name="nama"
+                            class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border p-4 rounded-xl outline-none focus:border-brand-500"
+                            placeholder="Nama">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 ml-1 block">Kelas</label>
+                            <select name="kelas" required
+                                class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border p-4 rounded-xl outline-none focus:border-brand-500 text-slate-600 dark:text-slate-300 appearance-none cursor-pointer">
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                class="text-[10px] font-bold text-slate-400 uppercase mb-2 ml-1 block">Jurusan</label>
+                            <select name="jurusan" required
+                                class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border p-4 rounded-xl outline-none focus:border-brand-500 text-slate-600 dark:text-slate-300 appearance-none cursor-pointer">
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 ml-1 block">HP
+                                Siswa</label>
+                            <input type="tel" name="telpSiswa"
+                                class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border p-4 rounded-xl outline-none focus:border-brand-500"
+                                placeholder="08...">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 ml-1 block">Nomor HP Ortu
+                            (WA)</label>
+                        <input type="tel" name="telpOrtu"
+                            class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border p-4 rounded-xl outline-none focus:border-brand-500"
+                            placeholder="Isi untuk aktifkan WhatsApp">
+                    </div>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" data-action="close-modal"
+                        class="flex-1 py-4 bg-slate-100 dark:bg-slate-700 rounded-2xl font-bold uppercase text-[10px]">Batal</button>
+                    <button type="submit"
+                        class="flex-1 py-4 bg-brand-600 rounded-2xl font-bold text-white shadow-lg btn-press uppercase text-[10px]">Simpan
+                        Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reset Confirmation Modal -->
+    <div id="resetModal"
+        class="fixed inset-0 bg-slate-950/80 z-[120] hidden flex items-center justify-center p-4 modal-backdrop">
+        <div
+            class="bg-white dark:bg-dark-card w-full max-w-sm rounded-[2.5rem] p-8 border border-slate-200 dark:border-dark-border shadow-2xl modal-content">
+            <div class="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <span class="text-4xl italic">⚠️</span>
+            </div>
+            <h2 class="text-xl font-black text-center mb-2">RESET DATABASE</h2>
+            <p class="text-center text-xs text-slate-500 mb-6">Tindakan ini akan menghapus seluruh data siswa secara
+                permanen.</p>
+            <div class="grid gap-4">
+                <button data-action="delete-all"
+                    class="w-full py-5 bg-red-600 text-white rounded-2xl font-bold flex flex-col items-center group hover:bg-red-700 transition-all btn-press">
+                    <span class="uppercase text-xs mt-1">Ya, Hapus Semua</span>
+                    <span class="text-[8px] opacity-60 font-normal">SEMUA DATA AKAN HILANG</span>
+                </button>
+
+                <button data-action="close-modal"
+                    class="py-4 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-2xl font-bold uppercase text-xs btn-press">Batal</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Maintenance Modal -->
+    <div id="maintenanceModal"
+        class="fixed inset-0 bg-slate-950/80 z-[120] hidden flex items-center justify-center p-4 modal-backdrop">
+        <div
+            class="bg-white dark:bg-dark-card w-full max-w-sm rounded-[2.5rem] p-8 border border-orange-200 dark:border-orange-900/30 shadow-2xl modal-content">
+            <div
+                class="w-20 h-20 bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6 animate-pulse">
+                <span class="text-4xl">🔧</span>
+            </div>
+            <h2 class="text-xl font-black text-center mb-2 text-orange-600 dark:text-orange-400">FITUR MAINTENANCE</h2>
+            <p class="text-center text-sm text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
+                Fitur <strong class="text-orange-600 dark:text-orange-400">WhatsApp</strong> sedang dalam masa perbaikan
+                dan peningkatan.
+            </p>
+            <div
+                class="bg-orange-50 dark:bg-orange-900/10 border border-orange-200 dark:border-orange-900/30 rounded-2xl p-4 mb-6">
+                <p class="text-xs text-slate-600 dark:text-slate-400 text-center leading-relaxed">
+                    <span class="block font-bold text-orange-600 dark:text-orange-400 mb-2">📋 Mohon
+                        Pengertiannya</span>
+                    Kami sedang melakukan perbaikan untuk memberikan pengalaman yang lebih baik. Fitur ini akan segera
+                    aktif kembali.
+                </p>
+            </div>
+            <div class="grid gap-3">
+                <button data-action="close-modal"
+                    class="w-full py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-2xl font-bold uppercase text-xs btn-press shadow-lg shadow-orange-500/30 transition-all">
+                    Mengerti
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Toast Notification -->
+    <div id="toast"
+        class="fixed bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-4 rounded-2xl font-bold shadow-2xl transition-all duration-500 opacity-0 translate-y-20 pointer-events-none z-[200] flex items-center gap-3 border border-white/10">
+        <span id="toastIcon"></span>
+        <span id="toastMsg"></span>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div
+        class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-dark-card/90 backdrop-blur-md border-t border-slate-200 dark:border-dark-border p-4 flex justify-around z-50">
+        <button onclick="window.scrollTo({top:0, behavior:'smooth'})"
+            class="p-2 flex flex-col items-center active:scale-95 transition-transform">
+            <span class="text-xl">🏠</span>
+            <span class="text-[8px] font-bold uppercase mt-1">Beranda</span>
+        </button>
+        <button data-action="open-reset" class="p-2 flex flex-col items-center active:scale-95 transition-transform">
+            <span class="text-xl">⚠️</span>
+            <span class="text-[8px] font-bold uppercase mt-1">Reset</span>
+        </button>
+        <button data-action="toggle-theme" class="p-2 flex flex-col items-center active:scale-95 transition-transform">
+            <span class="dark:hidden text-xl">🌙</span><span class="hidden dark:inline text-xl">☀️</span>
+            <span class="text-[8px] font-bold uppercase mt-1">Tema</span>
+        </button>
+    </div>
+
+    <!-- Admin Panel (Hidden by default) -->
+    <div id="adminPanel" class="hidden fixed inset-0 z-[150] bg-slate-950/95 backdrop-blur-sm overflow-y-auto">
+        <div class="min-h-screen p-4 md:p-8">
+            <div class="max-w-6xl mx-auto">
+                <!-- Header -->
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-3xl font-black text-white mb-2 flex items-center gap-3">
+                            <span
+                                class="w-12 h-12 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg">⚙️</span>
+                            ADMIN MODE
+                        </h1>
+                        <p class="text-slate-400 text-sm font-bold">Kelola Konfigurasi Kelas & Jurusan</p>
+                    </div>
+                    <button data-action="close-admin"
+                        class="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg">
+                        <span>←</span> Kembali ke Beranda
+                    </button>
+                </div>
+
+                <!-- Config Tables -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Kelas Management -->
+                    <div
+                        class="bg-white dark:bg-dark-card rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-dark-border">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-black flex items-center gap-2">
+                                <span class="text-2xl">📚</span> Manajemen Kelas
+                            </h2>
+                            <button data-action="add-kelas"
+                                class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold transition-all shadow-lg">
+                                + Tambah Kelas
+                            </button>
+                        </div>
+                        <div id="kelasTable" class="space-y-2">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Jurusan Management -->
+                    <div
+                        class="bg-white dark:bg-dark-card rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-dark-border">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-black flex items-center gap-2">
+                                <span class="text-2xl">🎓</span> Manajemen Jurusan
+                            </h2>
+                            <button data-action="add-jurusan"
+                                class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-lg">
+                                + Tambah Jurusan
+                            </button>
+                        </div>
+                        <div id="jurusanTable" class="space-y-2">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Box -->
+                <div
+                    class="mt-6 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20 rounded-2xl p-6">
+                    <div class="flex items-start gap-4">
+                        <span class="text-3xl">💡</span>
+                        <div>
+                            <h3 class="font-black text-white mb-2">Real-Time Sync</h3>
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                Setiap perubahan yang Anda buat akan <strong>langsung tersimpan</strong> dan
+                                <strong>otomatis diterapkan</strong>
+                                ke seluruh sistem tanpa perlu reload halaman. Semua dropdown dan filter akan update
+                                secara real-time.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Core Application Module - Enterprise Edition V6.0
+         * Implements Singleton, Factory, SOLID principles, and SSOT Architecture.
+         */
+
+        // ============================================================
+        // DYNAMIC CONFIG MANAGER - Priority: localStorage > Default
+        // ============================================================
+        class ConfigManager {
+            static CONFIG_KEY = 'app_config';
+
+            static DEFAULT_CONFIG = {
+                KELAS_OPTIONS: [
+                    { value: 'X', label: 'X' },
+                    { value: 'XI', label: 'XI' },
+                    { value: 'XII', label: 'XII' }
+                ],
+                JURUSAN_OPTIONS: [
+                    { value: 'TJKT 1', label: 'TJKT 1' },
+                    { value: 'TJKT 2', label: 'TJKT 2' },
+                    { value: 'TK 1', label: 'TK 1' },
+                    { value: 'TK 2', label: 'TK 2' },
+                    { value: 'MPLB', label: 'MPLB' },
+                    { value: 'AKL', label: 'AKL' },
+                    { value: 'Pemasaran', label: 'Pemasaran' },
+                    { value: 'ULP', label: 'ULP' }
+                ]
+            };
+
+            /**
+             * Load config with priority: localStorage > Default
+             */
+            static loadConfig() {
+                try {
+                    const stored = localStorage.getItem(this.CONFIG_KEY);
+                    if (stored) {
+                        const parsed = JSON.parse(stored);
+                        // Validate structure
+                        if (Array.isArray(parsed.KELAS_OPTIONS) && Array.isArray(parsed.JURUSAN_OPTIONS)) {
+                            console.log('✅ Loaded config from localStorage');
+                            return parsed;
+                        }
+                    }
+                } catch (e) {
+                    console.error('Config load error:', e);
+                }
+
+                // Fallback to default
+                console.log('📋 Using default config');
+                return this.DEFAULT_CONFIG;
+            }
+
+            /**
+             * Save config to localStorage
+             */
+            static saveConfig(config) {
+                try {
+                    localStorage.setItem(this.CONFIG_KEY, JSON.stringify(config));
+                    console.log('✅ Config saved to localStorage');
+                    return true;
+                } catch (e) {
+                    console.error('Config save error:', e);
+                    return false;
+                }
+            }
+
+            /**
+             * Add item to config array
+             */
+            static addItem(type, value, label) {
+                const config = this.loadConfig();
+                const key = type === 'kelas' ? 'KELAS_OPTIONS' : 'JURUSAN_OPTIONS';
+
+                // Check duplicate
+                if (config[key].some(item => item.value === value)) {
+                    return { success: false, error: 'Item sudah ada' };
+                }
+
+                config[key].push({ value, label });
+                this.saveConfig(config);
+                return { success: true };
+            }
+
+            /**
+             * Remove item from config array
+             */
+            static removeItem(type, value) {
+                const config = this.loadConfig();
+                const key = type === 'kelas' ? 'KELAS_OPTIONS' : 'JURUSAN_OPTIONS';
+
+                config[key] = config[key].filter(item => item.value !== value);
+                this.saveConfig(config);
+                return { success: true };
+            }
+
+            /**
+             * Edit item in config array
+             */
+            static editItem(type, oldValue, newValue, newLabel) {
+                const config = this.loadConfig();
+                const key = type === 'kelas' ? 'KELAS_OPTIONS' : 'JURUSAN_OPTIONS';
+
+                const index = config[key].findIndex(item => item.value === oldValue);
+                if (index !== -1) {
+                    config[key][index] = { value: newValue, label: newLabel };
+                    this.saveConfig(config);
+                    return { success: true };
+                }
+                return { success: false, error: 'Item tidak ditemukan' };
+            }
+        }
+
+        // ============================================================
+        // SINGLE SOURCE OF TRUTH (SSOT) - APP CONFIGURATION
+        // ============================================================
+        const APP_CONFIG = Object.freeze({
+            VERSION: '6.0-ENTERPRISE',
+            STORAGE_KEY: 'RAZIA_APP_V6',
+
+            // Dynamic Config - Loaded from ConfigManager
+            get KELAS_OPTIONS() {
+                return ConfigManager.loadConfig().KELAS_OPTIONS;
+            },
+
+            get JURUSAN_OPTIONS() {
+                return ConfigManager.loadConfig().JURUSAN_OPTIONS;
+            },
+
+            // Validation Rules
+            VALIDATION: Object.freeze({
+                MIN_NAME_LENGTH: 3,
+                MAX_NAME_LENGTH: 100,
+                MIN_REASON_LENGTH: 5,
+                PHONE_PATTERN: /^\d+$/,
+                WARNING_THRESHOLD: 3
+            }),
+
+            // UI Configuration
+            UI: Object.freeze({
+                CHUNK_SIZE: 10,
+                DEBOUNCE_DELAY: 300,
+                TOAST_DURATION: 3000,
+                ANIMATION_DELAY: 300
+            })
+        });
+
+        // --- Utils & Helpers ---
+        const Utils = {
+            generateId: () => `ID-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            formatDate: (isoString) => {
+                try {
+                    return new Date(isoString).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                } catch (e) {
+                    console.error('Date formatting error:', e);
+                    return 'Invalid Date';
+                }
+            },
+            debounce: (func, wait) => {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => { clearTimeout(timeout); func(...args); };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            },
+            sanitize: (str) => {
+                if (typeof str !== 'string') return '';
+                const temp = document.createElement('div');
+                temp.textContent = str;
+                return temp.innerHTML;
+            },
+
+            // Defensive: Safe DOM Query
+            safeQuerySelector: (selector, parent = document) => {
+                try {
+                    return parent.querySelector(selector);
+                } catch (e) {
+                    console.error(`Invalid selector: ${selector}`, e);
+                    return null;
+                }
+            }
+        };
+
+        // --- Services Layer (Business Logic) ---
+
+        // 1. Storage Service (SRP: Handles Data Persistence & Safety)
+        class StorageService {
+            static KEY = APP_CONFIG.STORAGE_KEY;
+
+            static save(data) {
+                try {
+                    // Schema validation before save
+                    if (!Array.isArray(data)) {
+                        throw new Error('Data must be an array');
+                    }
+
+                    const serialized = JSON.stringify(data);
+
+                    // Check storage quota
+                    if (serialized.length > 5000000) { // ~5MB limit
+                        console.warn('Storage approaching limit');
+                    }
+
+                    localStorage.setItem(this.KEY, serialized);
+                    return true;
+                } catch (e) {
+                    console.error("Storage Error:", e);
+                    if (e.name === 'QuotaExceededError') {
+                        throw new Error("Penyimpanan penuh! Hapus beberapa data lama.");
+                    }
+                    throw new Error("Gagal menyimpan data: " + e.message);
+                }
+            }
+
+            static load() {
+                try {
+                    const raw = localStorage.getItem(this.KEY);
+                    if (!raw) return [];
+
+                    const parsed = JSON.parse(raw);
+
+                    // Defensive: Validate structure
+                    if (!Array.isArray(parsed)) {
+                        console.error('Invalid data structure, resetting');
+                        return [];
+                    }
+
+                    return parsed;
+                } catch (e) {
+                    console.error("Data Load Error:", e);
+                    // Backup corrupt data
+                    const corrupt = localStorage.getItem(this.KEY);
+                    if (corrupt) {
+                        localStorage.setItem(this.KEY + '_CORRUPT_BACKUP', corrupt);
+                    }
+                    return []; // Graceful degradation
+                }
+            }
+
+            static clear() {
+                try {
+                    localStorage.removeItem(this.KEY);
+                    return true;
+                } catch (e) {
+                    console.error("Clear storage error:", e);
+                    return false;
+                }
+            }
+        }
+
+        // 2. Notification Service (SRP: Handles User Feedback)
+        class ToastSystem {
+            static show(msg, icon = '✅', type = 'info') {
+                const el = document.getElementById('toast');
+                const msgEl = document.getElementById('toastMsg');
+                const iconEl = document.getElementById('toastIcon');
+
+                msgEl.innerText = msg;
+                iconEl.innerText = icon;
+
+                // Reset classes
+                el.className = `fixed bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl font-bold shadow-2xl transition-all duration-500 z-[200] flex items-center gap-3 border border-white/10 ${type === 'error' ? 'bg-red-600 text-white' : 'bg-slate-900 text-white'}`;
+
+                // Animate In
+                requestAnimationFrame(() => {
+                    el.classList.remove('opacity-0', 'translate-y-20', 'pointer-events-none');
+                });
+
+                // Auto hide
+                if (this.timeout) clearTimeout(this.timeout);
+                this.timeout = setTimeout(() => {
+                    el.classList.add('opacity-0', 'translate-y-20', 'pointer-events-none');
+                }, 3000);
+            }
+        }
+
+        // 3. Enhanced Validation Service with Schema Validation
+        class Validator {
+            static validateStudent(data) {
+                const errors = {};
+                const cfg = APP_CONFIG.VALIDATION;
+
+                try {
+                    // Required fields
+                    if (!data.nama || typeof data.nama !== 'string') {
+                        errors.nama = "Nama wajib diisi";
+                    } else if (data.nama.trim().length < cfg.MIN_NAME_LENGTH) {
+                        errors.nama = `Nama minimal ${cfg.MIN_NAME_LENGTH} karakter`;
+                    } else if (data.nama.trim().length > cfg.MAX_NAME_LENGTH) {
+                        errors.nama = `Nama maksimal ${cfg.MAX_NAME_LENGTH} karakter`;
+                    }
+
+                    // Validate Kelas against SSOT
+                    if (!data.kelas) {
+                        errors.kelas = "Kelas wajib diisi";
+                    } else if (!APP_CONFIG.KELAS_OPTIONS.some(k => k.value === data.kelas)) {
+                        errors.kelas = "Kelas tidak valid";
+                    }
+
+                    // Validate Jurusan against SSOT
+                    if (!data.jurusan) {
+                        errors.jurusan = "Jurusan wajib diisi";
+                    } else if (!APP_CONFIG.JURUSAN_OPTIONS.some(j => j.value === data.jurusan)) {
+                        errors.jurusan = "Jurusan tidak valid";
+                    }
+
+                    if (!data.alasan || data.alasan.trim().length < cfg.MIN_REASON_LENGTH) {
+                        errors.alasan = `Kronologi minimal ${cfg.MIN_REASON_LENGTH} karakter`;
+                    }
+
+                    // Optional phone validation
+                    if (data.telpSiswa && !cfg.PHONE_PATTERN.test(data.telpSiswa)) {
+                        errors.telpSiswa = "Hanya angka diperbolehkan";
+                    }
+                    if (data.telpOrtu && !cfg.PHONE_PATTERN.test(data.telpOrtu)) {
+                        errors.telpOrtu = "Hanya angka diperbolehkan";
+                    }
+
+                    return { valid: Object.keys(errors).length === 0, errors };
+                } catch (e) {
+                    console.error('Validation error:', e);
+                    return { valid: false, errors: { _system: 'Validation failed' } };
+                }
+            }
+
+            // Schema validator for data integrity
+            static validateSchema(obj) {
+                try {
+                    return (
+                        obj &&
+                        typeof obj === 'object' &&
+                        typeof obj.id === 'string' &&
+                        typeof obj.nama === 'string' &&
+                        Array.isArray(obj.history)
+                    );
+                } catch (e) {
+                    return false;
+                }
+            }
+        }
+
+        // --- Domain Classes (Models) ---
+        class StudentModel {
+            constructor(data) {
+                this.id = data.id || Utils.generateId();
+                this.nama = data.nama;
+                this.kelas = data.kelas || 'X'; // X, XI, XII
+                this.jurusan = data.jurusan || data.kelas || ''; // Backward compatibility: jika data lama pakai 'kelas' untuk jurusan
+                this.telpSiswa = data.telpSiswa || '';
+                this.telpOrtu = data.telpOrtu || '';
+                this.statusSitaan = data.statusSitaan || 'TIADA'; // TIADA, BELUM, SELESAI
+                this.history = data.history || [];
+            }
+
+            addViolation(reason, mode) {
+                this.history.unshift({
+                    timestamp: new Date().toISOString(),
+                    reason,
+                    mode // 'SITA', 'CATAT'
+                });
+                if (mode === 'SITA') this.statusSitaan = 'BELUM';
+            }
+
+            toggleStatus() {
+                const states = ['BELUM', 'SELESAI', 'TIADA']; // Cycle logic adjusted
+                let currIdx = states.indexOf(this.statusSitaan);
+                // If current is SELESAI or TIADA, validation might be needed depending on history
+                // For simplicity, cycle: BELUM -> SELESAI -> TIADA -> BELUM
+                if (currIdx === -1) currIdx = 0;
+                this.statusSitaan = states[(currIdx + 1) % states.length];
+            }
+        }
+
+        // 4. DOM Injector - Dynamic Injection from SSOT
+        class DOMInjector {
+            /**
+             * Inject options into select element from SSOT
+             * @param {HTMLSelectElement} selectElement 
+             * @param {Array} options - Array of {value, label}
+             * @param {string} placeholderText - Optional placeholder
+             */
+            static injectOptions(selectElement, options, placeholderText = null) {
+                if (!selectElement || !(selectElement instanceof HTMLSelectElement)) {
+                    console.error('Invalid select element');
+                    return;
+                }
+
+                try {
+                    // Clear existing options
+                    selectElement.innerHTML = '';
+
+                    // Add placeholder if provided
+                    if (placeholderText) {
+                        const placeholder = document.createElement('option');
+                        placeholder.value = '';
+                        placeholder.disabled = true;
+                        placeholder.selected = true;
+                        placeholder.textContent = placeholderText;
+                        selectElement.appendChild(placeholder);
+                    }
+
+                    // Inject options from SSOT
+                    options.forEach(opt => {
+                        const option = document.createElement('option');
+                        option.value = opt.value;
+                        option.textContent = opt.label;
+                        selectElement.appendChild(option);
+                    });
+                } catch (e) {
+                    console.error('DOM Injection error:', e);
+                }
+            }
+
+            /**
+             * Inject filter buttons dynamically
+             */
+            static injectFilterButtons(container, options, dataAttr, allLabel = 'Semua') {
+                if (!container) return;
+
+                try {
+                    container.innerHTML = '';
+
+                    // "All" button
+                    const allBtn = this.createFilterButton('all', allLabel, dataAttr, true);
+                    container.appendChild(allBtn);
+
+                    // Individual buttons
+                    options.forEach(opt => {
+                        const btn = this.createFilterButton(opt.value, opt.label, dataAttr, false);
+                        container.appendChild(btn);
+                    });
+                } catch (e) {
+                    console.error('Filter button injection error:', e);
+                }
+            }
+
+            static createFilterButton(value, label, dataAttr, isActive) {
+                const btn = document.createElement('button');
+                btn.setAttribute(`data-${dataAttr}`, value);
+                btn.textContent = label;
+
+                if (isActive) {
+                    btn.className = "px-4 py-2 bg-brand-600 text-white rounded-full text-[10px] font-bold uppercase whitespace-nowrap shadow-lg shadow-brand-500/30 transition-all hover:scale-105 active:scale-95";
+                } else {
+                    btn.className = "px-4 py-2 bg-white dark:bg-dark-card text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-dark-border rounded-full text-[10px] font-bold uppercase whitespace-nowrap transition-all hover:border-brand-500 hover:text-brand-500 hover:shadow-md active:scale-95";
+                }
+
+                return btn;
+            }
+        }
+
+        // 5. Custom Select Component (UI/UX)
+        class CustomSelect {
+            constructor(originalSelect) {
+                this.originalSelect = originalSelect;
+                this.originalSelect.style.display = 'none'; // Hide native select
+                this.wrapper = this.createWrapper();
+                this.originalSelect.parentNode.insertBefore(this.wrapper, this.originalSelect);
+
+                // Close when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!this.wrapper.contains(e.target)) {
+                        this.wrapper.classList.remove('open');
+                        this.wrapper.querySelector('.arrow')?.classList.remove('rotate-180');
+                    }
+                });
+            }
+
+            createWrapper() {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'custom-select-wrapper w-full';
+
+                // Trigger (The "Input" look)
+                const trigger = document.createElement('div');
+                const isMobileFilter = this.originalSelect.id === 'mobile-filter';
+                const initialText = this.originalSelect.options[this.originalSelect.selectedIndex].text;
+
+                trigger.className = `custom-select-trigger w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border p-4 rounded-2xl flex justify-between items-center text-slate-600 dark:text-slate-300 font-bold text-sm outline-none hover:border-brand-500 hover:ring-2 hover:ring-brand-500/10 transition-all ${isMobileFilter ? 'bg-white dark:bg-dark-card' : ''}`;
+
+                trigger.innerHTML = `<span>${initialText}</span><span class="arrow transition-transform duration-300">▼</span>`;
+
+                trigger.addEventListener('click', () => {
+                    wrapper.classList.toggle('open');
+                    trigger.querySelector('.arrow').classList.toggle('rotate-180');
+                });
+
+                // Options Container
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'custom-select-options custom-scroll';
+
+                Array.from(this.originalSelect.options).forEach(opt => {
+                    if (opt.disabled) return; // Skip disabled placeholders
+
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = `custom-option ${opt.selected ? 'selected' : ''}`;
+                    optionDiv.textContent = opt.text;
+                    optionDiv.dataset.value = opt.value;
+
+                    optionDiv.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent wrapper close immediately
+                        this.selectOption(opt.value, opt.text, trigger, optionsContainer);
+                    });
+
+                    optionsContainer.appendChild(optionDiv);
+                });
+
+                wrapper.appendChild(trigger);
+                wrapper.appendChild(optionsContainer);
+                return wrapper;
+            }
+
+            selectOption(value, text, trigger, container) {
+                // Update Native Select
+                this.originalSelect.value = value;
+                this.originalSelect.dispatchEvent(new Event('change')); // Trigger change event logic
+
+                // Update UI
+                trigger.querySelector('span').textContent = text;
+                this.wrapper.classList.remove('open');
+                trigger.querySelector('.arrow').classList.remove('rotate-180');
+
+                // Update Selected Visuals
+                container.querySelectorAll('.custom-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                    if (opt.dataset.value === value) opt.classList.add('selected');
+                });
+            }
+
+            // Public method to update UI if value changed externally
+            updateUI(value) {
+                const option = Array.from(this.originalSelect.options).find(o => o.value === value);
+                if (option) {
+                    this.wrapper.querySelector('.custom-select-trigger span').textContent = option.text;
+                    this.wrapper.querySelectorAll('.custom-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                        if (opt.dataset.value === value) opt.classList.add('selected');
+                    });
+                }
+            }
+        }
+
+        // --- Presentation Layer (UI Renderer) with Memory Management ---
+        class DOMRenderer {
+            constructor() {
+                this.container = document.getElementById('studentContainer');
+                this.statsContainer = document.getElementById('stats-container');
+                this.sentinel = document.getElementById('sentinel');
+
+                // Memory Management: Track rendered nodes
+                this.renderedNodes = new Map(); // id -> HTMLElement
+                this.maxRenderedNodes = 100; // Limit untuk prevent memory leak
+
+                // Intersection Observer for Infinite Scroll
+                this.observer = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        document.dispatchEvent(new CustomEvent('req-load-more'));
+                    }
+                }, { rootMargin: '100px' });
+
+                if (this.sentinel) this.observer.observe(this.sentinel);
+            }
+
+            // Memory Management: Clean up old nodes
+            cleanupExcessNodes() {
+                if (this.renderedNodes.size > this.maxRenderedNodes) {
+                    const toRemove = this.renderedNodes.size - this.maxRenderedNodes;
+                    const keys = Array.from(this.renderedNodes.keys());
+
+                    for (let i = 0; i < toRemove; i++) {
+                        const key = keys[i];
+                        const node = this.renderedNodes.get(key);
+                        if (node && node.parentNode) {
+                            node.remove(); // Remove from DOM
+                        }
+                        this.renderedNodes.delete(key);
+                    }
+
+                    console.log(`Cleaned up ${toRemove} nodes for memory optimization`);
+                }
+            }
+
+            renderStats(students) {
+                try {
+                    const total = students.length;
+                    const sita = students.filter(s => s.statusSitaan === 'BELUM').length;
+                    const clear = students.filter(s => s.statusSitaan === 'SELESAI').length;
+
+                    this.statsContainer.innerHTML = `
+                        <div class="bg-white dark:bg-dark-card p-4 rounded-3xl border border-slate-200 dark:border-dark-border shadow-sm text-center transform hover:scale-105 transition-transform duration-300">
+                            <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Total Siswa</p>
+                            <h4 class="text-xl font-black italic text-slate-800 dark:text-white">${total}</h4>
+                        </div>
+                        <div class="bg-white dark:bg-dark-card p-4 rounded-3xl border border-slate-200 dark:border-dark-border shadow-sm text-center transform hover:scale-105 transition-transform duration-300">
+                            <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Disita</p>
+                            <h4 class="text-xl font-black text-red-500 italic">${sita}</h4>
+                        </div>
+                        <div class="bg-white dark:bg-dark-card p-4 rounded-3xl border border-slate-200 dark:border-dark-border shadow-sm text-center transform hover:scale-105 transition-transform duration-300">
+                            <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Selesai</p>
+                            <h4 class="text-xl font-black text-emerald-500 italic">${clear}</h4>
+                        </div>
+                    `;
+                } catch (e) {
+                    console.error('Stats rendering error:', e);
+                }
+            }
+
+            createCard(s) {
+                try {
+                    const el = document.createElement('div');
+                    const hasWarning = s.history.length >= APP_CONFIG.VALIDATION.WARNING_THRESHOLD;
+                    const isMaintenance = this.whatsappMaintenance;
+
+                    el.className = `bg-white dark:bg-dark-card border-2 ${s.statusSitaan === 'BELUM' ? 'border-red-500/40' : 'border-slate-200 dark:border-dark-border'} rounded-[2.5rem] p-6 md:p-8 transition-all hover:shadow-xl animate-slide-up group relative overflow-hidden`;
+                    el.dataset.studentId = s.id; // For tracking
+
+                    // Status Badge Logic
+                    let badge = `<span class="bg-slate-100 dark:bg-slate-800 text-slate-500 text-[8px] px-2.5 py-1 rounded-lg font-black uppercase tracking-wider">Aman</span>`;
+                    if (s.statusSitaan === 'BELUM') badge = `<span class="bg-red-500 text-white text-[8px] px-2.5 py-1 rounded-lg font-black animate-pulse uppercase tracking-wider shadow-lg shadow-red-500/30">Disita</span>`;
+                    if (s.statusSitaan === 'SELESAI') badge = `<span class="bg-emerald-500 text-white text-[8px] px-2.5 py-1 rounded-lg font-black uppercase tracking-wider shadow-lg shadow-emerald-500/30">Selesai</span>`;
+
+                    // WhatsApp Button Logic
+                    let waButtonClass, waButtonTitle, waButtonOverlay;
+                    if (isMaintenance) {
+                        waButtonClass = 'bg-orange-500 dark:bg-orange-600 cursor-not-allowed opacity-80';
+                        waButtonTitle = '🔧 Fitur WhatsApp sedang dalam perbaikan';
+                        waButtonOverlay = '<div class="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-red-500/20 backdrop-blur-[2px] flex items-center justify-center"><span class="text-[8px] font-black text-white bg-orange-600 px-2 py-1 rounded-lg shadow-lg">MAINTENANCE</span></div>';
+                    } else if (!hasWarning) {
+                        waButtonClass = 'bg-slate-300 dark:bg-slate-800 cursor-not-allowed opacity-70';
+                        waButtonTitle = 'Belum mencapai batas peringatan (3x)';
+                        waButtonOverlay = '<div class="absolute inset-0 bg-slate-500/10 backdrop-blur-[1px]"></div>';
+                    } else {
+                        waButtonClass = 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20';
+                        waButtonTitle = 'Hubungi Orang Tua';
+                        waButtonOverlay = '';
+                    }
+
+                    el.innerHTML = `
+                        <div class="flex justify-between items-start mb-6 relative z-10">
+                            <div class="cursor-pointer" onclick="App.dispatchEvent('req-edit', '${s.id}')">
+                                <h3 class="text-xl font-black text-slate-800 dark:text-white group-hover:text-brand-500 transition-colors">${Utils.sanitize(s.nama)}</h3>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-1">Kelas ${Utils.sanitize(s.kelas)} - ${Utils.sanitize(s.jurusan)} • ${s.telpSiswa || 'No Phone'}</p>
+                            </div>
+                            <button onclick="App.dispatchEvent('req-delete', '${s.id}')" class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all" title="Hapus Data">
+                                <span class="text-sm">🗑️</span>
+                            </button>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-dark-bg p-5 rounded-3xl mb-6 border border-slate-100 dark:border-slate-800/50">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-1">
+                                    <span>History</span>
+                                    <span class="bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-1.5 rounded text-[8px]">${s.history.length}</span>
+                                </span>
+                                ${badge}
+                            </div>
+                            <div class="space-y-4 max-h-32 overflow-y-auto custom-scroll pr-2">
+                                ${s.history.map(h => `
+                                    <div class="relative pl-4 border-l-2 border-slate-200 dark:border-slate-700">
+                                        <div class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full ${h.mode === 'SITA' ? 'bg-red-500' : 'bg-slate-400'}"></div>
+                                        <div class="flex justify-between items-start">
+                                             <p class="text-[8px] font-bold text-slate-400 uppercase mb-0.5">${Utils.formatDate(h.timestamp)} • ${h.mode}</p>
+                                        </div>
+                                        <p class="text-xs italic text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-2 hover:line-clamp-none transition-all cursor-default">"${Utils.sanitize(h.reason)}"</p>
+                                    </div>
+                                `).join('')}
+                                 ${s.history.length === 0 ? '<p class="text-center text-[10px] text-slate-400 italic py-2">Belum ada riwayat</p>' : ''}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2 relative z-10">
+                            <button onclick="App.dispatchEvent('req-quick-add', '${s.id}')" class="py-3 bg-brand-600 hover:bg-brand-700 text-white text-[9px] font-black rounded-xl btn-press uppercase shadow-lg shadow-brand-500/20 transition-all flex flex-col items-center justify-center group/btn">
+                                <span class="text-lg mb-0.5 group-hover/btn:-translate-y-0.5 transition-transform">⚡</span>
+                                TAMBAH
+                            </button>
+                            <button onclick="App.dispatchEvent('req-toggle-status', '${s.id}')" class="py-3 bg-slate-100 dark:bg-dark-border hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-[9px] font-black rounded-xl btn-press uppercase transition-all flex flex-col items-center justify-center">
+                                <span class="text-lg mb-0.5">🔄</span>
+                                STATUS
+                            </button>
+                            <button onclick="App.dispatchEvent('req-wa', '${s.id}')" 
+                                class="py-3 ${waButtonClass} text-white text-[9px] font-black rounded-xl btn-press uppercase shadow-lg transition-all flex flex-col items-center justify-center relative overflow-hidden"
+                                title="${waButtonTitle}">
+                                <span class="text-lg mb-0.5">${isMaintenance ? '🔧' : '💬'}</span>
+                                WHATSAPP
+                                ${waButtonOverlay}
+                            </button>
+                        </div>
+                    `;
+                    return el;
+                } catch (e) {
+                    console.error('Card creation error:', e);
+                    return document.createElement('div'); // Return empty div on error
+                }
+            }
+
+            clearList() {
+                try {
+                    this.container.innerHTML = '';
+                    this.renderedNodes.clear(); // Clear tracking
+                } catch (e) {
+                    console.error('Clear list error:', e);
+                }
+            }
+
+            appendCards(studentNodes) {
+                try {
+                    const fragment = document.createDocumentFragment();
+                    studentNodes.forEach(node => {
+                        fragment.appendChild(node);
+                        // Track rendered nodes
+                        const id = node.dataset.studentId;
+                        if (id) this.renderedNodes.set(id, node);
+                    });
+                    this.container.appendChild(fragment);
+
+                    // Memory cleanup
+                    this.cleanupExcessNodes();
+
+                    // Manage sentinel visibility
+                    if (this.sentinel) {
+                        this.sentinel.classList.remove('hidden');
+                        this.container.appendChild(this.sentinel); // Move sentinel to bottom
+                    }
+                } catch (e) {
+                    console.error('Append cards error:', e);
+                }
+            }
+
+            toggleLoading(isLoading) {
+                try {
+                    const indicator = document.getElementById('loading-indicator');
+                    if (indicator) {
+                        if (isLoading) indicator.classList.remove('hidden');
+                        else indicator.classList.add('hidden');
+                    }
+                } catch (e) {
+                    console.error('Toggle loading error:', e);
+                }
+            }
+
+            renderNotifications(students) {
+                try {
+                    const badge = document.getElementById('notif-badge');
+                    const list = document.getElementById('notif-list');
+                    const countText = document.getElementById('notif-count-text');
+
+                    const warningStudents = students.filter(s => s.history.length >= APP_CONFIG.VALIDATION.WARNING_THRESHOLD);
+                    const count = warningStudents.length;
+
+                    if (count > 0) {
+                        badge.innerText = count;
+                        badge.classList.remove('hidden');
+                        countText.innerText = `${count} Siswa`;
+
+                        list.innerHTML = `
+                            <div class="px-4 py-2 bg-red-500/10 text-red-600 dark:text-red-400 text-[9px] font-bold text-center uppercase tracking-widest border-b border-red-500/10">
+                                Wajib Panggilan Orang Tua
+                            </div>
+                        ` + warningStudents.map(s => `
+                            <div class="notification-item flex items-center gap-3" onclick="App.dispatchEvent('req-focus-student', '${s.id}')">
+                                <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center text-lg">
+                                    ⚠️
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-[11px] font-black text-slate-800 dark:text-white truncate">${Utils.sanitize(s.nama)}</h4>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${s.kelas} - ${s.jurusan} • ${s.history.length}x Pelanggaran</p>
+                                </div>
+                                <button onclick="event.stopPropagation(); App.dispatchEvent('req-wa', '${s.id}')" class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">
+                                    <span class="text-xs">💬</span>
+                                </button>
+                            </div>
+                        `).join('');
+                    } else {
+                        badge.classList.add('hidden');
+                        countText.innerText = `0 Siswa`;
+                        list.innerHTML = `
+                             <div class="p-8 text-center opacity-40">
+                                <span class="text-3xl block mb-2">🎈</span>
+                                <p class="text-[10px] font-bold uppercase tracking-widest">Semua Aman</p>
+                            </div>
+                        `;
+                    }
+                } catch (e) {
+                    console.error('Notification rendering error:', e);
+                }
+            }
+        }
+
+        // --- Main Controller (Mediator) ---
+        class AppController {
+            constructor() {
+                this.students = [];
+                this.isDark = false;
+                this.dom = new DOMRenderer();
+
+                // Data Entry Buffer
+                this.pendingData = null;
+
+                // Pagination/Search State
+                this.searchTerm = '';
+                this.activeFilterKelas = 'all'; // Filter state untuk Kelas
+                this.activeFilterJurusan = 'all'; // Filter state untuk Jurusan
+                this.displayedCount = 0;
+                this.chunkSize = APP_CONFIG.UI.CHUNK_SIZE; // From SSOT
+
+                // WhatsApp Maintenance Mode
+                this.whatsappMaintenance = true; // Set ke true untuk aktifkan maintenance, false untuk normal
+            }
+
+            async init() {
+                try {
+                    // DYNAMIC INJECTION: Populate dropdowns from SSOT
+                    this.injectDynamicOptions();
+
+                    // Load Data with Schema Validation
+                    const rawData = StorageService.load();
+                    this.students = rawData
+                        .filter(d => Validator.validateSchema(d)) // Filter corrupt data
+                        .map(d => new StudentModel(d)); // Hydrate models
+
+                    // Log if data was filtered
+                    if (rawData.length !== this.students.length) {
+                        console.warn(`Filtered ${rawData.length - this.students.length} corrupt records`);
+                    }
+
+                    // Load Theme
+                    this.isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                    this.applyTheme();
+
+                    this.attachGlobalListeners();
+                    this.refreshUI(true);
+
+                    console.log(`✅ App Initialized Successfully - ${APP_CONFIG.VERSION}`);
+                } catch (error) {
+                    this.handleCriticalError(error);
+                }
+            }
+
+            /**
+             * DYNAMIC INJECTION: Populate all dropdowns and filters from SSOT
+             */
+            injectDynamicOptions() {
+                try {
+                    // Main Form - Kelas
+                    const mainKelas = Utils.safeQuerySelector('select[name="kelas"]');
+                    if (mainKelas) {
+                        DOMInjector.injectOptions(mainKelas, APP_CONFIG.KELAS_OPTIONS, 'Pilih Kelas...');
+                    }
+
+                    // Main Form - Jurusan
+                    const mainJurusan = Utils.safeQuerySelector('select[name="jurusan"]');
+                    if (mainJurusan) {
+                        DOMInjector.injectOptions(mainJurusan, APP_CONFIG.JURUSAN_OPTIONS, 'Pilih Jurusan...');
+                    }
+
+                    // Edit Form - Kelas
+                    const editKelas = Utils.safeQuerySelector('#editForm select[name="kelas"]');
+                    if (editKelas) {
+                        DOMInjector.injectOptions(editKelas, APP_CONFIG.KELAS_OPTIONS);
+                    }
+
+                    // Edit Form - Jurusan
+                    const editJurusan = Utils.safeQuerySelector('#editForm select[name="jurusan"]');
+                    if (editJurusan) {
+                        DOMInjector.injectOptions(editJurusan, APP_CONFIG.JURUSAN_OPTIONS);
+                    }
+
+                    // Mobile Filter - Kelas
+                    const mobileKelas = Utils.safeQuerySelector('#mobile-filter-kelas');
+                    if (mobileKelas) {
+                        mobileKelas.innerHTML = '<option value="all">📚 Semua Kelas</option>';
+                        APP_CONFIG.KELAS_OPTIONS.forEach(opt => {
+                            const option = document.createElement('option');
+                            option.value = opt.value;
+                            option.textContent = `Kelas ${opt.label}`;
+                            mobileKelas.appendChild(option);
+                        });
+                    }
+
+                    // Mobile Filter - Jurusan
+                    const mobileJurusan = Utils.safeQuerySelector('#mobile-filter-jurusan');
+                    if (mobileJurusan) {
+                        mobileJurusan.innerHTML = '<option value="all">🎓 Semua Jurusan</option>';
+                        APP_CONFIG.JURUSAN_OPTIONS.forEach(opt => {
+                            const option = document.createElement('option');
+                            option.value = opt.value;
+                            option.textContent = opt.label;
+                            mobileJurusan.appendChild(option);
+                        });
+                    }
+
+                    // Desktop Filter Buttons - Kelas
+                    const desktopKelas = Utils.safeQuerySelector('#desktop-filter-kelas');
+                    if (desktopKelas) {
+                        DOMInjector.injectFilterButtons(desktopKelas, APP_CONFIG.KELAS_OPTIONS, 'filter-kelas', 'Semua');
+                    }
+
+                    // Desktop Filter Buttons - Jurusan
+                    const desktopJurusan = Utils.safeQuerySelector('#desktop-filter-jurusan');
+                    if (desktopJurusan) {
+                        DOMInjector.injectFilterButtons(desktopJurusan, APP_CONFIG.JURUSAN_OPTIONS, 'filter-jurusan', 'Semua');
+                    }
+
+                    console.log('✅ Dynamic injection completed from SSOT');
+                } catch (e) {
+                    console.error('Dynamic injection error:', e);
+                }
+            }
+
+            /**
+             * ADMIN PANEL RENDERER - Render config tables
+             */
+            renderAdminPanel() {
+                try {
+                    const kelasTable = document.getElementById('kelasTable');
+                    const jurusanTable = document.getElementById('jurusanTable');
+
+                    if (!kelasTable || !jurusanTable) return;
+
+                    // Render Kelas Table
+                    kelasTable.innerHTML = APP_CONFIG.KELAS_OPTIONS.map(item => `
+                        <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-brand-600 text-white rounded-lg flex items-center justify-center font-bold text-sm">${item.label}</span>
+                                <span class="font-bold text-sm">Kelas ${item.label}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button data-action="edit-kelas" data-value="${item.value}" data-label="${item.label}"
+                                    class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all">
+                                    ✏️ Edit
+                                </button>
+                                <button data-action="delete-kelas" data-value="${item.value}"
+                                    class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition-all">
+                                    🗑️ Hapus
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    // Render Jurusan Table
+                    jurusanTable.innerHTML = APP_CONFIG.JURUSAN_OPTIONS.map(item => `
+                        <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-emerald-600 text-white rounded-lg flex items-center justify-center font-bold text-xs">${item.label.substring(0, 2)}</span>
+                                <span class="font-bold text-sm">${item.label}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button data-action="edit-jurusan" data-value="${item.value}" data-label="${item.label}"
+                                    class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all">
+                                    ✏️ Edit
+                                </button>
+                                <button data-action="delete-jurusan" data-value="${item.value}"
+                                    class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition-all">
+                                    🗑️ Hapus
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    console.log('✅ Admin panel rendered');
+                } catch (e) {
+                    console.error('Admin panel render error:', e);
+                }
+            }
+
+            /**
+             * INSTANT SYNC - Re-inject and re-render after config change
+             */
+            instantSync() {
+                // Clear existing CustomSelect wrappers to prevent duplication
+                document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
+                    const select = wrapper.nextElementSibling;
+                    if (select && select.tagName === 'SELECT') {
+                        select.style.display = ''; // Re-show native select
+                    }
+                    wrapper.remove(); // Remove wrapper
+                });
+
+                this.injectDynamicOptions();
+                this.initCustomSelects(); // Refresh CustomSelect components
+                this.renderAdminPanel();
+                this.refreshUI(true);
+                console.log('🔄 Instant sync completed');
+            }
+
+            initCustomSelects() {
+                // Main Form - Kelas
+                const mainSelectKelas = document.querySelector('select[name="kelas"]');
+                if (mainSelectKelas) new CustomSelect(mainSelectKelas);
+
+                // Main Form - Jurusan
+                const mainSelectJurusan = document.querySelector('select[name="jurusan"]');
+                if (mainSelectJurusan) new CustomSelect(mainSelectJurusan);
+
+                // Mobile Filter
+                const mobileFilter = document.getElementById('mobile-filter');
+                if (mobileFilter) this.mobileFilterSelect = new CustomSelect(mobileFilter);
+
+                // Edit Form - Kelas
+                const editSelectKelas = document.querySelector('#editForm select[name="kelas"]');
+                if (editSelectKelas) this.editFilterSelectKelas = new CustomSelect(editSelectKelas);
+
+                // Edit Form - Jurusan
+                const editSelectJurusan = document.querySelector('#editForm select[name="jurusan"]');
+                if (editSelectJurusan) this.editFilterSelectJurusan = new CustomSelect(editSelectJurusan);
+            }
+
+            attachGlobalListeners() {
+                // Init Custom Selects
+                this.initCustomSelects();
+
+                // Event Delegation & Custom Events Wrapper
+                window.App = {
+                    dispatchEvent: (name, detail) => document.dispatchEvent(new CustomEvent(name, { detail }))
+                };
+
+                // Form Submit
+                const form = document.getElementById('mainForm');
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleFormSubmit(new FormData(form));
+                });
+
+                // Search
+                const searchBar = document.getElementById('searchBar');
+                const clearBtn = document.getElementById('clearSearch');
+
+                const toggleBtn = () => {
+                    if (searchBar.value.length > 0) {
+                        clearBtn.classList.remove('opacity-0', 'pointer-events-none');
+                    } else {
+                        clearBtn.classList.add('opacity-0', 'pointer-events-none');
+                    }
+                };
+
+                const debouncedRefresh = Utils.debounce(() => {
+                    this.refreshUI(true);
+                }, APP_CONFIG.UI.DEBOUNCE_DELAY); // From SSOT
+
+                searchBar.addEventListener('input', (e) => {
+                    this.searchTerm = e.target.value;
+                    toggleBtn();
+                    debouncedRefresh();
+                });
+
+                clearBtn.addEventListener('click', () => {
+                    searchBar.value = '';
+                    this.searchTerm = '';
+                    toggleBtn();
+                    this.refreshUI(true);
+                    searchBar.focus();
+                });
+
+                // Attach toggleBtn to controller for external use
+                this.updateSearchUI = toggleBtn;
+
+                // Edit Form
+                document.getElementById('editForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleEditSubmit(new FormData(e.target));
+                });
+
+                // Filter Buttons Desktop - Kelas
+                document.getElementById('desktop-filter-kelas').addEventListener('click', (e) => {
+                    const btn = e.target.closest('[data-filter-kelas]');
+                    if (btn) {
+                        this.activeFilterKelas = btn.dataset.filterKelas;
+                        document.getElementById('mobile-filter-kelas').value = this.activeFilterKelas;
+                        this.refreshUI(true);
+                    }
+                });
+
+                // Filter Buttons Desktop - Jurusan
+                document.getElementById('desktop-filter-jurusan').addEventListener('click', (e) => {
+                    const btn = e.target.closest('[data-filter-jurusan]');
+                    if (btn) {
+                        this.activeFilterJurusan = btn.dataset.filterJurusan;
+                        document.getElementById('mobile-filter-jurusan').value = this.activeFilterJurusan;
+                        this.refreshUI(true);
+                    }
+                });
+
+                // Filter Select Mobile - Kelas
+                document.getElementById('mobile-filter-kelas').addEventListener('change', (e) => {
+                    this.activeFilterKelas = e.target.value;
+                    this.refreshUI(true);
+                });
+
+                // Filter Select Mobile - Jurusan
+                document.getElementById('mobile-filter-jurusan').addEventListener('change', (e) => {
+                    this.activeFilterJurusan = e.target.value;
+                    this.refreshUI(true);
+                });
+
+                // Custom Actions Controller from Buttons
+                document.addEventListener('click', (e) => {
+                    const action = e.target.closest('[data-action]')?.dataset.action;
+                    if (!action) return;
+
+                    switch (action) {
+                        case 'toggle-theme': this.toggleTheme(); break;
+                        case 'open-reset': this.toggleModal('resetModal', true); break;
+                        case 'close-modal': this.closeAllModals(); break;
+                        case 'delete-all': this.deleteAllData(); break;
+                        case 'confirm-sita': this.finalizeViolation('SITA'); break;
+                        case 'confirm-catat': this.finalizeViolation('CATAT'); break;
+                        case 'toggle-notifications': this.toggleNotifications(); break;
+                        case 'focus-student': this.focusStudent(detail); break;
+                    }
+                });
+
+                // Auto-close notifications when clicking outside
+                document.addEventListener('click', (e) => {
+                    const panel = document.getElementById('notif-panel');
+                    const btn = document.getElementById('notif-btn');
+                    if (panel && !panel.contains(e.target) && !btn.contains(e.target)) {
+                        panel.classList.remove('active');
+                    }
+                });
+
+                // Infinite Scroll Request
+                document.addEventListener('req-load-more', () => {
+                    this.loadMore();
+                });
+
+                // Student Actions (Dispatched from DOMRenderer)
+                document.addEventListener('req-delete', (e) => this.deleteStudent(e.detail));
+                document.addEventListener('req-toggle-status', (e) => this.toggleStatus(e.detail));
+                document.addEventListener('req-quick-add', (e) => this.quickAdd(e.detail));
+                document.addEventListener('req-edit', (e) => this.openEdit(e.detail));
+                document.addEventListener('req-wa', (e) => this.reqWa(e.detail));
+                document.addEventListener('req-focus-student', (e) => this.focusStudent(e.detail));
+
+                // Admin Mode Actions
+                document.addEventListener('click', (e) => {
+                    const action = e.target.closest('[data-action]')?.dataset.action;
+                    if (!action) return;
+
+                    // Toggle Admin Panel
+                    if (action === 'toggle-admin') {
+                        document.getElementById('adminPanel').classList.remove('hidden');
+                        this.renderAdminPanel();
+                    }
+
+                    // Close Admin Panel
+                    if (action === 'close-admin') {
+                        document.getElementById('adminPanel').classList.add('hidden');
+                    }
+
+                    // Add Kelas
+                    if (action === 'add-kelas') {
+                        const value = prompt('Masukkan kode kelas (contoh: XIII):');
+                        if (value) {
+                            const result = ConfigManager.addItem('kelas', value, value);
+                            if (result.success) {
+                                ToastSystem.show(`Kelas ${value} berhasil ditambahkan`, '✅');
+                                this.instantSync();
+                            } else {
+                                ToastSystem.show(result.error, '⚠️', 'error');
+                            }
+                        }
+                    }
+
+                    // Add Jurusan
+                    if (action === 'add-jurusan') {
+                        const value = prompt('Masukkan nama jurusan (contoh: TJKT 3):');
+                        if (value) {
+                            const result = ConfigManager.addItem('jurusan', value, value);
+                            if (result.success) {
+                                ToastSystem.show(`Jurusan ${value} berhasil ditambahkan`, '✅');
+                                this.instantSync();
+                            } else {
+                                ToastSystem.show(result.error, '⚠️', 'error');
+                            }
+                        }
+                    }
+
+                    // Edit Kelas
+                    if (action === 'edit-kelas') {
+                        const oldValue = e.target.closest('[data-value]').dataset.value;
+                        const newValue = prompt('Edit kode kelas:', oldValue);
+                        if (newValue && newValue !== oldValue) {
+                            const result = ConfigManager.editItem('kelas', oldValue, newValue, newValue);
+                            if (result.success) {
+                                ToastSystem.show(`Kelas berhasil diupdate`, '✅');
+                                this.instantSync();
+                            } else {
+                                ToastSystem.show(result.error, '⚠️', 'error');
+                            }
+                        }
+                    }
+
+                    // Edit Jurusan
+                    if (action === 'edit-jurusan') {
+                        const oldValue = e.target.closest('[data-value]').dataset.value;
+                        const newValue = prompt('Edit nama jurusan:', oldValue);
+                        if (newValue && newValue !== oldValue) {
+                            const result = ConfigManager.editItem('jurusan', oldValue, newValue, newValue);
+                            if (result.success) {
+                                ToastSystem.show(`Jurusan berhasil diupdate`, '✅');
+                                this.instantSync();
+                            } else {
+                                ToastSystem.show(result.error, '⚠️', 'error');
+                            }
+                        }
+                    }
+
+                    // Delete Kelas
+                    if (action === 'delete-kelas') {
+                        const value = e.target.closest('[data-value]').dataset.value;
+                        if (confirm(`Hapus Kelas ${value}?`)) {
+                            ConfigManager.removeItem('kelas', value);
+                            ToastSystem.show(`Kelas ${value} berhasil dihapus`, '🗑️');
+                            this.instantSync();
+                        }
+                    }
+
+                    // Delete Jurusan
+                    if (action === 'delete-jurusan') {
+                        const value = e.target.closest('[data-value]').dataset.value;
+                        if (confirm(`Hapus Jurusan ${value}?`)) {
+                            ConfigManager.removeItem('jurusan', value);
+                            ToastSystem.show(`Jurusan ${value} berhasil dihapus`, '🗑️');
+                            this.instantSync();
+                        }
+                    }
+                });
+
+            }
+
+            // --- Core Logic ---
+
+            refreshUI(reset = false) {
+                if (reset) {
+                    this.dom.clearList();
+                    this.displayedCount = 0;
+                }
+
+                // Filter Logic (Search + Kelas + Jurusan)
+                const filtered = this.students.filter(s => {
+                    const matchesSearch = s.nama.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                        s.jurusan.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                        s.kelas.toLowerCase().includes(this.searchTerm.toLowerCase());
+                    const matchesKelas = this.activeFilterKelas === 'all' || s.kelas === this.activeFilterKelas;
+                    const matchesJurusan = this.activeFilterJurusan === 'all' || s.jurusan === this.activeFilterJurusan;
+
+                    return matchesSearch && matchesKelas && matchesJurusan;
+                });
+
+                // Update Filter Button Styles - Kelas
+                document.querySelectorAll('[data-filter-kelas]').forEach(btn => {
+                    if (btn.dataset.filterKelas === this.activeFilterKelas) {
+                        btn.className = "px-4 py-2 bg-brand-600 text-white rounded-full text-[10px] font-bold uppercase whitespace-nowrap shadow-lg shadow-brand-500/30 transition-all scale-105";
+                    } else {
+                        btn.className = "px-4 py-2 bg-white dark:bg-dark-card text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-dark-border rounded-full text-[10px] font-bold uppercase whitespace-nowrap transition-all hover:border-brand-500 hover:text-brand-500 active:scale-95";
+                    }
+                });
+
+                // Update Filter Button Styles - Jurusan
+                document.querySelectorAll('[data-filter-jurusan]').forEach(btn => {
+                    if (btn.dataset.filterJurusan === this.activeFilterJurusan) {
+                        btn.className = "px-4 py-2 bg-brand-600 text-white rounded-full text-[10px] font-bold uppercase whitespace-nowrap shadow-lg shadow-brand-500/30 transition-all scale-105";
+                    } else {
+                        btn.className = "px-4 py-2 bg-white dark:bg-dark-card text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-dark-border rounded-full text-[10px] font-bold uppercase whitespace-nowrap transition-all hover:border-brand-500 hover:text-brand-500 active:scale-95";
+                    }
+                });
+
+                // Stats always reflect full filtered set (or total set if input empty?)
+                // Usually stats reflect total DB. Let's keep it total DB for dashboard feel.
+                this.dom.renderStats(this.students);
+                this.dom.renderNotifications(this.students);
+
+                // Pagination Logic
+                const nextBatch = filtered.slice(this.displayedCount, this.displayedCount + this.chunkSize);
+
+                if (nextBatch.length > 0) {
+                    const nodes = nextBatch.map(s => this.dom.createCard(s));
+                    this.dom.appendCards(nodes);
+                    this.displayedCount += nextBatch.length;
+
+                    // Hide sentinel if end reached
+                    if (this.displayedCount >= filtered.length) {
+                        if (this.dom.sentinel) this.dom.sentinel.classList.add('hidden');
+                    } else {
+                        if (this.dom.sentinel) this.dom.sentinel.classList.remove('hidden');
+                    }
+                } else if (reset) {
+                    // Empty State
+                    this.dom.container.innerHTML = `
+                        <div class="col-span-full flex flex-col items-center justify-center py-12 opacity-50">
+                            <span class="text-6xl block mb-4">😶‍🌫️</span>
+                            <p class="text-slate-500 dark:text-slate-400 font-bold text-lg">Data tidak ditemukan</p>
+                        </div>
+                    `;
+                    if (this.dom.sentinel) this.dom.sentinel.classList.add('hidden');
+                }
+            }
+
+            loadMore() {
+                this.dom.toggleLoading(true);
+                // Simulate network delay for UX smoothness (optional)
+                setTimeout(() => {
+                    this.refreshUI(false);
+                    this.dom.toggleLoading(false);
+                }, 300);
+            }
+
+            handleFormSubmit(formData) {
+                const data = Object.fromEntries(formData.entries());
+
+                // Validation
+                const { valid, errors } = Validator.validateStudent(data);
+                this.clearFormErrors();
+                if (!valid) {
+                    this.showFormErrors(errors);
+                    ToastSystem.show("Periksa kembali inputan Anda", "⚠️", "error");
+                    return;
+                }
+
+                this.pendingData = { ...data, isNew: true };
+                this.toggleModal('actionModal', true);
+            }
+
+            finalizeViolation(mode) {
+                // Determine source
+                let student;
+
+                if (this.pendingData.isNew) {
+                    // Check duplicate name logic? Skipped for now, allowing same names
+                    // BUT, smart check: if strict match name AND kelas, maybe prompt? 
+                    // Let's assume new entry every time for registration form as per old logic
+                    // Actually old logic checked existing. Let's replicate smart check.
+                    const existing = this.students.find(s => s.nama.toLowerCase() === this.pendingData.nama.toLowerCase() && s.kelas.toLowerCase() === this.pendingData.kelas.toLowerCase());
+
+                    if (existing) {
+                        existing.addViolation(this.pendingData.alasan, mode);
+                        ToastSystem.show("Data siswa lama diperbarui!");
+                        student = existing;
+
+                        // Re-sort to top
+                        this.students = this.students.filter(s => s !== existing);
+                        this.students.unshift(existing);
+                    } else {
+                        student = new StudentModel(this.pendingData);
+                        student.addViolation(this.pendingData.alasan, mode);
+                        this.students.unshift(student);
+                        ToastSystem.show("Siswa Baru Ditambahkan!", "🎉");
+                    }
+                } else if (this.pendingData.isQuick) {
+                    student = this.students.find(s => s.id === this.pendingData.studentId);
+                    if (student) {
+                        student.addViolation(this.pendingData.alasan, mode);
+                        ToastSystem.show("Pelanggaran ditambahkan!");
+
+                        // Move to top
+                        this.students = this.students.filter(s => s.id !== student.id);
+                        this.students.unshift(student);
+                    }
+                }
+
+                this.saveState();
+                this.closeAllModals();
+                document.getElementById('mainForm').reset();
+                this.pendingData = null;
+            }
+
+            saveState() {
+                StorageService.save(this.students);
+                this.refreshUI(true);
+            }
+
+            // --- Feature Implementations ---
+
+            deleteStudent(id) {
+                // Confirm dialog? Native for now.
+                if (confirm("Apakah Anda yakin menghapus data ini secara permanen?")) {
+                    this.students = this.students.filter(s => s.id !== id);
+                    this.saveState();
+                    ToastSystem.show("Data dihapus", "🗑️");
+                }
+            }
+
+            quickAdd(id) {
+                const reason = prompt("Masukkan detail pelanggaran:"); // Keep simple prompt for quick action
+                if (!reason) return;
+
+                this.pendingData = { studentId: id, alasan: reason, isQuick: true };
+                this.toggleModal('actionModal', true);
+            }
+
+            toggleStatus(id) {
+                const s = this.students.find(x => x.id === id);
+                if (s) {
+                    s.toggleStatus();
+                    this.saveState();
+                    ToastSystem.show(`Status diubah menjadi: ${s.statusSitaan}`);
+                }
+            }
+
+            openEdit(id) {
+                const s = this.students.find(x => x.id === id);
+                if (!s) return;
+
+                const form = document.getElementById('editForm');
+                // Fill Data
+                form.id.value = s.id;
+                form.nama.value = s.nama;
+                form.kelas.value = s.kelas;
+                form.jurusan.value = s.jurusan;
+
+                form.telpSiswa.value = s.telpSiswa;
+                form.telpOrtu.value = s.telpOrtu;
+
+                this.toggleModal('editModal', true);
+            }
+
+            handleEditSubmit(formData) {
+                const data = Object.fromEntries(formData.entries());
+                const s = this.students.find(x => x.id === data.id);
+
+                if (s) {
+                    s.nama = data.nama;
+                    s.kelas = data.kelas;
+                    s.jurusan = data.jurusan;
+                    s.telpSiswa = data.telpSiswa;
+                    s.telpOrtu = data.telpOrtu;
+                    this.saveState();
+                    this.closeAllModals();
+                    ToastSystem.show("Data diperbarui!");
+                }
+            }
+
+            reqWa(id) {
+                // Cek Maintenance Mode
+                if (this.whatsappMaintenance) {
+                    this.toggleModal('maintenanceModal', true);
+                    return;
+                }
+
+                const s = this.students.find(x => x.id === id);
+                if (!s || !s.telpOrtu) {
+                    ToastSystem.show("Nomor WA Ortu tidak tersedia", "⚠️", "error");
+                    return;
+                }
+
+                let phone = s.telpOrtu.replace(/\D/g, '');
+                if (phone.startsWith('0')) phone = '62' + phone.substring(1);
+                else if (!phone.startsWith('62')) phone = '62' + phone;
+
+                const text = `Halo, saya dari SMKN 1 Malteng. Menginfokan bahwa siswa atas nama *${s.nama}* (Kelas: *${s.kelas} - ${s.jurusan}*) telah melakukan pelanggaran ke-${s.history.length}.\n\nKronologi terakhir: ${s.history[0]?.reason || '-'}`;
+
+                // ============================================================
+                // KODULAR ANDROID INTERFACE BRIDGE
+                // ============================================================
+                // Di Kodular, Anda HARUS setup:
+                // 1. Activity Starter component dengan nama "WhatsAppStarter"
+                // 2. WebViewer.WebViewString untuk inject JavaScript interface:
+                //    - Name: "AndroidInterface"
+                //    - Method: "openWhatsApp(phone, message)"
+                // 3. Blocks untuk handle openWhatsApp:
+                //    - Set Activity Starter Action: android.intent.action.VIEW
+                //    - Set Activity Starter DataUri: "https://wa.me/" + phone + "?text=" + message
+                //    - Call Activity Starter.StartActivity
+                // ============================================================
+
+                if (typeof window.AndroidInterface !== 'undefined' && window.AndroidInterface.openWhatsApp) {
+                    // Mode APK Kodular: Panggil native Android function
+                    try {
+                        window.AndroidInterface.openWhatsApp(phone, text);
+                        ToastSystem.show("Membuka WhatsApp...", "💬");
+                    } catch (e) {
+                        ToastSystem.show("Error membuka WhatsApp: " + e.message, "⚠️", "error");
+                    }
+                } else {
+                    // Mode Browser Testing: Tampilkan info untuk developer
+                    const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+                    ToastSystem.show("Mode Browser: Android Interface tidak tersedia. Silakan build APK di Kodular.", "⚠️", "error");
+                    console.log("WhatsApp URL:", url);
+                    console.log("Phone:", phone);
+                    console.log("Message:", text);
+                    console.warn("SETUP REQUIRED: Tambahkan Android Interface di Kodular untuk WhatsApp integration.");
+                }
+            }
+
+
+
+            // --- Data Handling ---
+            deleteAllData() {
+                try {
+                    const confirmation = prompt("⚠️ PERINGATAN KERAS ⚠️\n\nSemua data akan dihapus permanen.\n\nKetik 'HAPUS' untuk melanjutkan:");
+                    if (confirmation === 'HAPUS') {
+                        this.students = [];
+                        const saved = StorageService.clear();
+                        if (saved) {
+                            this.saveState();
+                            this.closeAllModals();
+                            ToastSystem.show("Database berhasil di-reset total.", "💥");
+                        } else {
+                            throw new Error('Failed to clear storage');
+                        }
+                    } else if (confirmation !== null) {
+                        ToastSystem.show("Penghapusan dibatalkan.", "info");
+                    }
+                } catch (e) {
+                    console.error('Delete all data error:', e);
+                    ToastSystem.show("Gagal menghapus data: " + e.message, "⚠️", "error");
+                }
+            }
+
+            // --- Theme & UI Helpers ---
+            toggleTheme() {
+                this.isDark = !this.isDark;
+                this.applyTheme();
+            }
+
+            applyTheme() {
+                if (this.isDark) {
+                    document.documentElement.classList.add('dark');
+                    localStorage.theme = 'dark';
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.theme = 'light';
+                }
+            }
+
+            toggleModal(id, show) {
+                const el = document.getElementById(id);
+                if (show) {
+                    el.classList.remove('hidden');
+                    // slight delay for animation
+                    requestAnimationFrame(() => el.classList.add('modal-active'));
+                } else {
+                    el.classList.remove('modal-active');
+                    setTimeout(() => el.classList.add('hidden'), 300);
+                }
+            }
+
+            closeAllModals() {
+                document.querySelectorAll('.modal-active').forEach(el => {
+                    this.toggleModal(el.id, false);
+                });
+            }
+
+            toggleNotifications() {
+                const panel = document.getElementById('notif-panel');
+                panel.classList.toggle('active');
+            }
+
+            focusStudent(id) {
+                const s = this.students.find(x => x.id === id);
+                if (!s) return;
+
+                // Set filter to 'all' to ensure the student is visible
+                this.activeFilterKelas = 'all';
+                this.activeFilterJurusan = 'all';
+                this.searchTerm = s.nama;
+
+                // Update UI elements
+                document.getElementById('searchBar').value = s.nama;
+                document.getElementById('mobile-filter-kelas').value = 'all';
+                document.getElementById('mobile-filter-jurusan').value = 'all';
+
+                this.refreshUI(true);
+                this.updateSearchUI();
+
+                // Close panel
+                document.getElementById('notif-panel').classList.remove('active');
+
+                // Scroll to container
+                window.scrollTo({ top: document.getElementById('studentContainer').offsetTop - 100, behavior: 'smooth' });
+
+                ToastSystem.show(`Menampilkan data: ${s.nama}`, "🔍");
+            }
+
+            showFormErrors(errors) {
+                for (const [key, msg] of Object.entries(errors)) {
+                    const p = document.querySelector(`[data-error="${key}"]`);
+                    if (p) {
+                        p.innerText = msg;
+                        p.classList.remove('hidden');
+                        p.previousElementSibling?.classList.add('border-red-500');
+                    }
+                }
+            }
+
+            clearFormErrors() {
+                document.querySelectorAll('[data-error]').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('input, textarea').forEach(el => el.classList.remove('border-red-500'));
+            }
+
+            handleCriticalError(err) {
+                // Show Global Error UI
+                const box = document.getElementById('global-error');
+                const msg = document.getElementById('error-message');
+                msg.innerText = err.message || "Terjadi kesalahan sistem.";
+                box.classList.remove('hidden');
+                box.classList.add('flex');
+            }
+        }
+
+        // --- Entry Point ---
+        window.onerror = function (msg, url, line) {
+            console.error("Global Error Caught:", msg);
+            // In a real app, send to Sentry/LogRocket
+        };
+
+        const app = new AppController();
+        document.addEventListener('DOMContentLoaded', () => app.init());
+
+    </script>
+</body>
+
+</html>
